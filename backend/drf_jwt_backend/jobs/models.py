@@ -1,8 +1,7 @@
 from django.db import models
 from django import googlemaps
 
-API_KEY = 'AIzaSyABtJ2a7ItBSs6UP65ejX43b7mZcD1cSKs'
-map_client = googlemaps.Client(API_KEY)
+
 
 class Trip_Plan(models.Model):
     location = models.CharField(max_length=255)
