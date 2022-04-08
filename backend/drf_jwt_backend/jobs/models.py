@@ -1,5 +1,5 @@
 from django.db import models
-from django import googlemaps
+from django_google_maps import fields as map_fields
 
 
 
