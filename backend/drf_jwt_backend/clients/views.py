@@ -10,6 +10,7 @@ from .serializer import ClientSerializer
 
 
 @api_view (['GET', 'POST'])
+@permission_classes([AllowAny])
 def get_clients(request):
     client = Client.objects.all()
     if request.method == 'GET':
@@ -23,6 +24,8 @@ def get_clients(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET','PUT', 'DELETE'])
+# @permission_classes([IsAuthenticated])
+
 def clients_detail(request, pk):
     client = get_object_or_404(Client, pk=pk)
     if request.method == 'GET':

@@ -18,7 +18,7 @@
 # @permission_classes([AllowAny])
 # def get_id(request):
 #     print(
-#         'User ', f"{request.user.id} ")
+#         'User ', f"{request.user.id} {request.user.password} ")
 #     if request.method == 'POST':
 #         serializer = ClientSerializer(data=request.data)
 #         if serializer.is_valid():

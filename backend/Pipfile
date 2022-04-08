@@ -1,4 +1,3 @@
-
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true
@@ -10,6 +9,7 @@ djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 mysql-connector-python = "==8.0.26"
 django-cors-headers = "*"
+googlemaps = "*"
 
 [dev-packages]
 autopep8 = "*"
