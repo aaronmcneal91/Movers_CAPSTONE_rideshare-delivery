@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'cars.apps.CarsConfig',  # This app is for example use only
     'clients',
-    'client_type',
-    'django_google_maps'
+    'client_type'
+    
 ]
 
 MIDDLEWARE = [
