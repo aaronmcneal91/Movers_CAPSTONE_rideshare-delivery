@@ -16,7 +16,7 @@ const LoginPage = () => {
     if (isServerError) {
       reset();
     }
-  }, [isServerError, reset]);
+  }, [isServerError]);
 
   return (
     <div className="container">
@@ -40,10 +40,10 @@ const LoginPage = () => {
           />
         </label>
         {isServerError ? (
-          <p className="error">Login failed, incorrect credentials!</p>
+          <p className="error">Login failed, incorrect credentials</p>
         ) : null}
         <Link to="/register">Click to register!</Link>
-        <button>Login!</button>
+        <button style = {{borderColor:'orange', color: 'orange'}}>Login</button>
       </form>
     </div>
   );

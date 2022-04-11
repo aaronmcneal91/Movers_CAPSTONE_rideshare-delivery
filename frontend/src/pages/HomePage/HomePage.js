@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 
+
 const HomePage = () => {
   // The "user" value from this Hook contains the decoded logged in user information (username, first name, id)
   // The "token" value is the JWT token that you will send in the header of any request requiring authentication
@@ -13,7 +14,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        let response = await axios.get("http://127.0.0.1:8000/api/clients/", {
+        let response = await axios.get("http://127.0.0.1:8000/api/movers/clients/", {
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -27,13 +28,14 @@ const HomePage = () => {
   }, [token]);
   return (
     <div className="container">
-      <h1>Clients for {user.first_name}!</h1>
+      <h1>Home Page for {clients.first_name}!</h1>
       {clients &&
-        clients.map((clients) => (
-          <p key={clients.id}>
-            {clients.last_name}, {clients.first_name} 
+        clients.map((client) => (
+          <p key={client.id}>
+            {client.last_name}, {client.first_name}
           </p>
         ))}
+       
     </div>
   );
 };

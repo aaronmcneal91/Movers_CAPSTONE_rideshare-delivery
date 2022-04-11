@@ -11,27 +11,28 @@ const Navbar = () => {
     <div className="navBar">
       <ul>
         <li className="brand">
-          <Link to="/" style={{ textDecoration: 'none', style: 'italic', color: "ORANGE" }}>
-            <b>MOVERS</b>
+          <Link to="/" style={{ textDecoration: "none", color: "orange" }}>
+            <b>Movers</b>
           </Link>
         </li>
         <li> 
-          <button style = {{borderBlockColor:'orange', color: 'orange'}} onClick={('')}> HOME </button>
+          <button style = {{borderColor:'orange', color: 'orange'}} onClick={() => navigate("/")}> HOME </button>
         </li>
         <li> 
-          <button style = {{borderBlockColor:'orange', color: 'orange'}} onClick={('')}> CONTACT US </button>
+          <button style = {{borderColor:'orange', color: 'orange'}} onClick={() => navigate("/contact")}> CONTACT US </button>
+        </li>
+        
+        <li> 
+          <button style = {{borderColor:'orange', color: 'orange'}} onClick={() => navigate("/register")}> REGISTER </button>
+
         </li>
         <li>
-        <li> 
-          <button style = {{borderBlockColor:'orange', color: 'orange'}} onClick={('')}> REGISTER </button>
-        </li>
           {user ? (
-            <button style = {{borderBlockColor:'orange', color: 'orange'}} onClick={logoutUser}>LOGOUT</button>
+            <button style = {{borderColor:'orange', color: 'orange'}} onClick={logoutUser}>LOGOUT</button>
           ) : (
-            <button onClick={() => navigate("/login")}>Login</button>
+            <button style = {{borderColor:'orange', color: 'orange'}} onClick={() => navigate("/login")}>LOGIN</button>
           )}
         </li>
-     
       </ul>
     </div>
   );
