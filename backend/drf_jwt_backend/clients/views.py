@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from .models import Client
 from client_type.models import Client_Type
 from .serializer import ClientSerializer
+from django.contrib.auth.models import User
+from client_type.serializer import CLientTypeSerializer 
 
 
 @api_view (['GET', 'POST'])
@@ -19,17 +21,18 @@ def get_clients(request):
 
     elif request.method =="POST":
         serializer = ClientSerializer(data=request.data)
-        serializer.is_valid(raise_exception= True)
-        serializer.save()
+        serializer.is_valid()
+        serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET','PUT', 'DELETE'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 
 def clients_detail(request, pk):
-    client = get_object_or_404(Client, pk=pk)
+    #client = get_object_or_404(Client, pk=pk)
     if request.method == 'GET':
-        serializer = ClientSerializer(client)
+        client = Client.objects.filter(user_id=request.user.id)
+        serializer = ClientSerializer(client, many = True)
         return Response(serializer.data)
     elif request.method == 'PUT':
         client = get_object_or_404(Client, pk=pk)

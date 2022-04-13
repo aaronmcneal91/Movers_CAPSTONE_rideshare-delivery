@@ -13,14 +13,11 @@
             "justMyCode": true
         },
         {
-            "name": "Python: Django",
+            "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/drf_jwt_backend/manage.py",
-            "args": [
-                "runserver"
-            ],
-            "django": true,
+            "program": "${file}",
+            "console": "integratedTerminal",
             "justMyCode": true
         }
     ]
