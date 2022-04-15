@@ -3,7 +3,8 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
-
+from clients.models import Client
+from clients.serializer import ClientSerializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -30,7 +31,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
                   'first_name', 'last_name')
 
     def create(self, validated_data):
-
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -42,4 +42,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
 
+        client = Client.objects.create( 
+            user_id= user.id, 
+            first_name=user.first_name, 
+            last_name=user.last_name, 
+            email=user.email,
+            type_id=1
+        )
         return user

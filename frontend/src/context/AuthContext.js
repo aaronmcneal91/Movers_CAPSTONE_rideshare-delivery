@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+ import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
   const loginUser = async (loginData) => {
     try {
       let response = await axios.post(`${BASE_URL}/login/`, loginData);
+      console.log(response?.data);
       if (response.status === 200) {
         localStorage.setItem("token", JSON.stringify(response.data.access));
         setToken(JSON.parse(localStorage.getItem("token")));

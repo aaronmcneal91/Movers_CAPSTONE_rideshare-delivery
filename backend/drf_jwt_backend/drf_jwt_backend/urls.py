@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from clients import views
+from user import views
 
 
 urlpatterns = [
@@ -23,5 +24,6 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/cars/', include('cars.urls')),
     path('api/movers/', include('clients.urls')),
+    path('api/movers/', include ('user.urls')),
     
 ]

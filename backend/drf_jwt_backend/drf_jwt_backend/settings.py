@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'cars.apps.CarsConfig',  # This app is for example use only
     'clients',
-    'client_type'
+    'client_type',
+    'user'
     
 ]
 
