@@ -1,7 +1,7 @@
 import { Wrapper, Spinner, ErrorComponent } from "@googlemaps/react-wrapper";
 import Location from "./Location";
 
-export const GoogleMap = ({ place }) => {
+export const GoogleMap = ({ pickup, dropoff }) => {
   const render = (status) => {
     console.log(status);
     switch (status) {
@@ -10,7 +10,7 @@ export const GoogleMap = ({ place }) => {
       case "FAILURE":
         return <div>This thing is erroring</div>;
       case "SUCCESS":
-        return <Location place={place} />;
+        return <Location pickup={pickup} dropoff={dropoff} />;
       default:
         return <div>Something Else Happened, just in case</div>;
     }
@@ -21,7 +21,8 @@ export const GoogleMap = ({ place }) => {
       apiKey={process.env.REACT_APP_MAPS_API_KEY}
       libraries={["drawing", "geometry", "places", "visualization"]}
       render={render}
-      place={place}
+      pickup={pickup}
+      dropoff={dropoff}
     />
   );
 };

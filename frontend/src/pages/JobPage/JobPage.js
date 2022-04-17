@@ -4,15 +4,15 @@ import axios from "axios";
 
 let googlePlacesService;
 
-const MapPage = ({ place }) => {
-  return <GoogleMap place={place}></GoogleMap>;
+const MapPage = ({ pickup, dropoff }) => {
+  return <GoogleMap pickup={pickup} dropoff={dropoff}></GoogleMap>;
 };
 // const args = { one: 1, two: 2, three: 3 const};
 const JobForm = ({ onSubmit }) => {
   const [form, setForm] = useState({
     pickup: "",
-    destination: "",
-    address: "",
+    dropoff: "",
+    description: "",
   });
 
   const inputChange = (event) => {
@@ -21,9 +21,13 @@ const JobForm = ({ onSubmit }) => {
     setForm({ ...form, [name]: value });
   };
 
+  // const form = { pickup: 'asdada', destination: 'asdadas' }
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmit(form.pickup);
+    const { pickup, dropoff } = form;
+    // { pickup, dropoff }
+    // { pickup: form.pick, dropoff: form.dropoff }
+    onSubmit({ pickup, dropoff });
   };
 
   useEffect(() => {});
@@ -47,11 +51,11 @@ const JobForm = ({ onSubmit }) => {
           />
         </label>
         <label>
-          Destination:{" "}
+          Dropoff:{" "}
           <input
             type="text"
-            name="destination"
-            value={form.destination}
+            name="dropoff"
+            value={form.dropoff}
             onChange={inputChange}
           />
         </label>
@@ -75,9 +79,10 @@ const JobForm = ({ onSubmit }) => {
 };
 
 const JobPage = () => {
-  const [place, setPlace] = useState();
+  const [pickup, setPickup] = useState();
+  const [dropoff, setDropoff] = useState();
 
-  const handleFormSubmit = (pickup) => {
+  const handleFormSubmit = ({ pickup: place, dropoff: destination }) => {
     /*  If its not defined create it */
 
     if (!googlePlacesService) {
@@ -88,47 +93,79 @@ const JobPage = () => {
     }
 
     /* 
-            We need to send request body to places api 
-            https://developers.google.com/maps/documentation/javascript/places#find_place_from_query
-            the places api request body looks like:
-            { 
-                query: 'Some types in text', - text from the form
-                fields: ['name', 'geometry'] - some values you want to get back from api
-            }
-        */
-    const request = {
-      query: pickup,
-      fields: ["name", "geometry"],
-    };
-    /* 
-            Calls the places services to get list of places matching our query
-        */
-    try {
-      googlePlacesService.findPlaceFromQuery(
-        request,
-        function (results, status) {
-          console.log(status);
-          console.log(results?.[0]);
-          if (status === "OK") {
-            const nextPlace = results?.[0];
-            console.log(nextPlace);
-            if (nextPlace) {
-              setPlace(nextPlace);
-            }
-            console.log("this is working too");
-          } else {
-            console.log("Shit is broken bruh!!!!!");
-          }
+        We need to send request body to places api 
+        https://developers.google.com/maps/documentation/javascript/places#find_place_from_query
+        the places api request body looks like:
+        { 
+            query: 'Some types in text', - text from the form
+            fields: ['name', 'geometry'] - some values you want to get back from api
         }
-      );
-    } catch (err) {
-      console.log(err);
+    */
+
+    /* 
+        Calls the places services to get list of places matching our query
+    */
+    if (place) {
+      const pickupRequest = {
+        query: place,
+        fields: ["name", "geometry"],
+      };
+
+      try {
+        googlePlacesService.findPlaceFromQuery(
+          pickupRequest,
+          function (results, status) {
+            console.log(status);
+            console.log(results?.[0]);
+            if (status === "OK") {
+              const nextPickup = results?.[0];
+              console.log(nextPickup);
+              if (nextPickup) {
+                setPickup(nextPickup);
+              }
+              console.log("this is working too");
+            } else {
+              console.log("Shit is broken bruh!!!!!");
+            }
+          }
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    if (destination) {
+      const dropoffRequest = {
+        query: destination,
+        fields: ["name", "geometry"],
+      };
+
+      try {
+        googlePlacesService.findPlaceFromQuery(
+          dropoffRequest,
+          function (results, status) {
+            console.log(status);
+            console.log(results?.[0]);
+            if (status === "OK") {
+              const nextDropoff = results?.[0];
+              console.log(nextDropoff);
+              if (nextDropoff) {
+                setDropoff(nextDropoff);
+              }
+              console.log("this is working too");
+            } else {
+              console.log("Shit is broken bruh!!!!!");
+            }
+          }
+        );
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
   return (
     <Fragment>
-      <MapPage place={place}></MapPage>
+      <MapPage pickup={pickup} dropoff={dropoff}></MapPage>
       <JobForm onSubmit={handleFormSubmit}></JobForm>
     </Fragment>
   );
