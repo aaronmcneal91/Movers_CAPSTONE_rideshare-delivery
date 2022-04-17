@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router-dom";
 
 
 const HomePage = () => {
@@ -13,6 +14,7 @@ const HomePage = () => {
   const userData = storedUserData && JSON.parse(storedUserData);
 
   const [user, token] = useAuth();
+
   const [client, setClient] = useState();
 
   useEffect(() => {
@@ -55,8 +57,15 @@ const HomePage = () => {
           <h1>Home Page for {client?.first_name}!</h1>
           <p>
             {client?.last_name}, {client?.first_name}: {client?.type?.type}
+            <Link to = "/jobpage"> Plan a trip </Link>
+            <Link to ="/">Trip History</Link>
+            <Link to ="/">View Jobs</Link>
+            
           </p>
         </Fragment>
+        
+        // <Link to = '/'>Plan a trip</Link>
+        // <button style = {{borderColor:'orange', color: 'orange'}}>Login</button>
       )}
     </div>
   );
