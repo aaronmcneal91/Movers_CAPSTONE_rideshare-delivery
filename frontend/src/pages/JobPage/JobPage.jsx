@@ -1,14 +1,15 @@
 import { useEffect, useState, Fragment } from "react";
 import { GoogleMap } from "../../components/Location/MapWrapper";
 import axios from "axios";
-
+import useAuth from "../../hooks/useAuth";
 let googlePlacesService;
 
 const MapPage = ({ pickup, dropoff }) => {
   return <GoogleMap pickup={pickup} dropoff={dropoff}></GoogleMap>;
 };
 // const args = { one: 1, two: 2, three: 3 const};
-const JobForm = ({ onSubmit }) => {
+const JobForm = ({ onMap, onStart }) => {
+  const [disabled, setDisabled] = useState(false);
   const [form, setForm] = useState({
     pickup: "",
     dropoff: "",
@@ -27,15 +28,9 @@ const JobForm = ({ onSubmit }) => {
     const { pickup, dropoff } = form;
     // { pickup, dropoff }
     // { pickup: form.pick, dropoff: form.dropoff }
-    onSubmit({ pickup, dropoff });
+    setDisabled(!pickup || !dropoff);
+    onMap({ pickup, dropoff });
   };
-
-  useEffect(() => {});
-
-  // hit submit calls api and gets lat/lng from address - useffect
-  //  call setPlace and add { lat, lng }
-  // everythig is re-renderd when you add setPlace
-  // next render place is passed to <GoogleMap>
 
   return (
     <div className="container">
@@ -68,22 +63,47 @@ const JobForm = ({ onSubmit }) => {
             onChange={inputChange}
           />
         </label>
-        <li>
-          <button style={{ borderColor: "orange", color: "orange" }}>
+        <div>
+          <button
+            type="submit"
+            style={{ borderColor: "orange", color: "orange" }}
+          >
+            Map Trip
+          </button>
+          <button
+            type="button"
+            style={{ borderColor: "green", color: "green", marginLeft: "15px" }}
+            disabled={disabled}
+            onClick={() => onStart()}
+          >
             Confirm
           </button>
-        </li>
+        </div>
       </form>
     </div>
   );
 };
 
-const JobPage = () => {
+const JobPage = ({ client }) => {
   const [pickup, setPickup] = useState();
   const [dropoff, setDropoff] = useState();
+  const [work, setWork] = useState();
+  const [user, token] = useAuth();
+  const [trip, setTrip] = useState();
+  const [from, setFrom] = useState();
+  const [to, setTo] = useState();
 
-  const handleFormSubmit = ({ pickup: place, dropoff: destination }) => {
+  console.log(client);
+  const clientId =
+    client?.id ||
+    (localStorage.getItem("client") &&
+      JSON.parse(localStorage.getItem("client"))?.id);
+  console.log(client);
+
+  const handleMapTrip = ({ pickup: place, dropoff: destination }) => {
     /*  If its not defined create it */
+    setTo(destination);
+    setFrom(place);
 
     if (!googlePlacesService) {
       const map = document.getElementById("map");
@@ -163,10 +183,46 @@ const JobPage = () => {
     }
   };
 
+  const handleStartTrip = async (client) => {
+    console.log("called handle start");
+    if (pickup && dropoff) {
+      console.log(pickup);
+      console.log({
+        pickup: from,
+        dropoff: to,
+        pickuplat: pickup.geometry.location.lat(),
+        pickuplng: pickup.geometry.location.lng(),
+        dropofflat: dropoff.geometry.location.lat(),
+        dropofflng: dropoff.geometry.location.lng(),
+        client_id: clientId,
+      });
+      try {
+        let response = await axios.post(
+          `http://127.0.0.1:8000/api/movers/trips`,
+          {
+            pickup: from,
+            dropoff: to,
+            pickuplat: pickup.geometry.location.lat(),
+            pickuplng: pickup.geometry.location.lng(),
+            dropofflat: dropoff.geometry.location.lat(),
+            dropofflng: dropoff.geometry.location.lng(),
+            client_id: clientId,
+          }
+        );
+        console.log(response.data);
+        // setTrip(response.data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      console.error("No pick and/or dropoff added");
+    }
+  };
+
   return (
     <Fragment>
-      <MapPage pickup={pickup} dropoff={dropoff}></MapPage>
-      <JobForm onSubmit={handleFormSubmit}></JobForm>
+      <MapPage pickup={pickup} dropoff={dropoff} work={work}></MapPage>
+      <JobForm onMap={handleMapTrip} onStart={handleStartTrip}></JobForm>
     </Fragment>
   );
 };
