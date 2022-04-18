@@ -4,46 +4,34 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from .models import Client
-from client_type.models import Client_Type
-from .serializer import ClientSerializer
+from .models import Trip
+from .serializer import TripSerializer
 from django.contrib.auth.models import User
 from client_type.serializer import CLientTypeSerializer 
+from clients.models import Client
 
 
 
 @api_view (['GET', 'POST'])
 @permission_classes([AllowAny])
-def get_clients(request):
-    client = Client.objects.all()
+def get_trips(request):
+    trip = Trip.objects.all()
     if request.method == 'GET':
-        serializer = ClientSerializer(client, many= True)
+        serializer = TripSerializer(trip, many= True)
         return Response (serializer.data)
 
     elif request.method =="POST":
-        serializer = ClientSerializer(data=request.data)
+        serializer = TripSerializer(data=request.data)
         serializer.is_valid()
-       
+        
         serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET','PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 
-def clients_detail(request, pk):
+def client_trips(request, pk):
     if request.method == 'GET':
-        client = Client.objects.filter(user_id=pk)
-        serializer = ClientSerializer(client, many = True)
+        trips = Trip.objects.filter(client_id=pk)
+        serializer = TripSerializer(trips, many = True)
         return Response(serializer.data)
-    elif request.method == 'PUT':
-        client = get_object_or_404(Client, pk=pk)
-        serializer = ClientSerializer(client, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    elif request.method == 'DELETE':
-        client.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-        
-

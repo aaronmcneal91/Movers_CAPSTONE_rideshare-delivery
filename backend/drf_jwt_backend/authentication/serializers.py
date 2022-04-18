@@ -48,5 +48,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             last_name=user.last_name, 
             email=user.email,
             type_id=1
+            
         )
         return user

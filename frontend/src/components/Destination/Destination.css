@@ -1,0 +1,6 @@
+.map {
+  display: block;
+  height: 300px;
+  width: inherit;
+  min-width: inherit;
+}
