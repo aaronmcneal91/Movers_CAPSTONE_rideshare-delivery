@@ -4,20 +4,25 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
-import { Link, useLocation } from "react-router-dom";
 
 const TripHistory = () => {
   const [user, token] = useAuth();
   const [trips, setTrips] = useState();
-  const {
-    state: { client },
-  } = useLocation();
+  let userData;
+  const storedUserData = localStorage.getItem("userData");
+  if (storedUserData) {
+    console.log(storedUserData);
+    userData = JSON.parse(storedUserData);
+    console.log(userData);
+  }
+
+  const path = userData?.type?.id === 1 ? "drivers" : "clients";
 
   useEffect(() => {
     const fetchTrips = async () => {
       try {
         let response = await axios.get(
-          `http://127.0.0.1:8000/api/movers/trips/${client.id}`,
+          `http://127.0.0.1:8000/api/movers/trips/${path}/${userData.id}`,
           {
             headers: {
               Authorization: "Bearer " + token,

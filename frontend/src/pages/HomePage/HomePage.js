@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { Fragment } from "react";
 import { useEffect, useState } from "react";
 
@@ -9,25 +10,25 @@ const HomePage = () => {
   // The "user" value from this Hook contains the decoded logged in user information (username, first name, id)
   // The "token" value is the JWT token that you will send in the header of any request requiring authentication
   const [user, token] = useAuth();
-  const [client, setClient] = useState();
-
-  const storedUserData = localStorage.getItem("user");
-  const userData = storedUserData && JSON.parse(storedUserData);
+  let userData;
+  let isDriver;
 
   useEffect(() => {
     const fetchClient = async () => {
       try {
         let response = await axios.get(
-          `http://127.0.0.1:8000/api/movers/clients/${userData.id}`,
+          `http://127.0.0.1:8000/api/movers/clients/${user.id}`,
           {
             headers: {
               Authorization: "Bearer " + token,
             },
           }
         );
-        console.log(response.data?.[0]);
-        setClient(response.data?.[0]);
-        localStorage.setItem("client", JSON.stringify(response.data?.[0]));
+
+        userData = response.data?.[0];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        isDriver = userData?.type?.id === 1;
+        localStorage.setItem("userData", JSON.stringify(userData));
       } catch (error) {
         console.log(error.message);
       }
@@ -35,29 +36,24 @@ const HomePage = () => {
     fetchClient();
   }, [token]);
 
+  const storedUserData = localStorage.getItem("userData");
+  if (storedUserData) {
+    console.log(storedUserData);
+    userData = JSON.parse(storedUserData);
+    console.log(userData);
+  }
+
   return (
     <div className="container">
-      {client && (
-        <Fragment>
-          <h1>Home Page for {client?.first_name}!</h1>
-          <p>
-            {client?.last_name}, {client?.first_name}: {client?.type?.type}:{" "}
-            <Link to="/jobpage" state={client}>
-              {" "}
-              Plan a trip{" "}
-            </Link>
-            <Link to="/history" state={client}>
-              Trip History
-            </Link>
-            <Link to="/jobs" state={client}>
-              View Jobs
-            </Link>
-          </p>
-        </Fragment>
-
-        // <Link to = '/'>Plan a trip</Link>
-        // <button style = {{borderColor:'orange', color: 'orange'}}>Login</button>
-      )}
+      <Fragment>
+        <h1>Home Page for {userData?.first_name}!</h1>
+        <p>
+          {userData?.last_name}, {userData?.first_name}: {userData?.type?.type}
+          {!isDriver && <Link to="/jobpage">Plan a trip</Link>}
+          <Link to="/history">Trip History</Link>
+          {isDriver && <Link to="/jobs">View Jobs</Link>}
+        </p>
+      </Fragment>
     </div>
   );
 };

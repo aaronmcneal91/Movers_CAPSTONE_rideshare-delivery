@@ -6,28 +6,30 @@ import useAuth from "../../hooks/useAuth";
 const WorkPage = () => {
   const [user, token] = useAuth();
   const [work, setWork] = useState();
-  const {
-    state: { client },
-  } = useLocation();
+  let userData;
+  const storedUserData = localStorage.getItem("userData");
+  if (storedUserData) {
+    userData = JSON.parse(storedUserData);
+  }
 
   useEffect(() => {
-    const ViewWork = async () => {
+    const viewWork = async () => {
       try {
         let response = await axios.get(
-          `http://127.0.0.1:8000/api/movers/trips/${client.id}`,
+          `http://127.0.0.1:8000/api/movers/trips/${userData.id}`,
           {
             headers: {
               Authorization: "Bearer " + token,
             },
           }
         );
-        console.log(response.data);
-        setWork(response.data);
+        console.log(response.data?.[0]);
+        setWork(response.data?.[0]);
       } catch (error) {
         console.log(error.message);
       }
     };
-    ViewWork();
+    viewWork();
   }, [token]);
 
   return (

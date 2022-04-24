@@ -25,11 +25,11 @@ const JobForm = ({ onMap, onStart }) => {
   // const form = { pickup: 'asdada', destination: 'asdadas' }
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { pickup, dropoff } = form;
+    const { pickup, dropoff, description } = form;
     // { pickup, dropoff }
     // { pickup: form.pick, dropoff: form.dropoff }
     setDisabled(!pickup || !dropoff);
-    onMap({ pickup, dropoff });
+    onMap({ pickup, dropoff, description });
   };
 
   return (
@@ -87,26 +87,34 @@ const JobForm = ({ onMap, onStart }) => {
 const JobPage = ({ client }) => {
   const [pickup, setPickup] = useState();
   const [dropoff, setDropoff] = useState();
+  const [description, setDescription] = useState();
   const [work, setWork] = useState();
   const [user, token] = useAuth();
   const [trip, setTrip] = useState();
   const [from, setFrom] = useState();
   const [to, setTo] = useState();
 
-  console.log(client);
-  const clientId =
-    client?.id ||
-    (localStorage.getItem("client") &&
-      JSON.parse(localStorage.getItem("client"))?.id);
-  console.log(client);
+  let userData;
+  const storedUserData = localStorage.getItem("userData");
+  if (storedUserData) {
+    console.log(storedUserData);
+    userData = JSON.parse(storedUserData);
+    console.log(userData);
+  }
 
-  const handleMapTrip = ({ pickup: place, dropoff: destination }) => {
+  let map, legs;
+  const handleMapTrip = ({
+    pickup: place,
+    dropoff: destination,
+    description: comments,
+  }) => {
     /*  If its not defined create it */
     setTo(destination);
     setFrom(place);
+    setDescription(comments);
 
     if (!googlePlacesService) {
-      const map = document.getElementById("map");
+      map = document.getElementById("map");
       console.log(window);
       console.log(map);
       googlePlacesService = new window.google.maps.places.PlacesService(map);
@@ -183,9 +191,14 @@ const JobPage = ({ client }) => {
     }
   };
 
-  const handleStartTrip = async (client) => {
+  const handleStartTrip = async () => {
     console.log("called handle start");
     if (pickup && dropoff) {
+      const tripdetail = localStorage.getItem("tripdetail");
+      if (tripdetail) {
+        legs = JSON.parse(tripdetail);
+      }
+
       console.log(pickup);
       console.log({
         pickup: from,
@@ -194,7 +207,9 @@ const JobPage = ({ client }) => {
         pickuplng: pickup.geometry.location.lng(),
         dropofflat: dropoff.geometry.location.lat(),
         dropofflng: dropoff.geometry.location.lng(),
-        client_id: clientId,
+        client_id: userData.id,
+        driver_id: null,
+        description,
       });
       try {
         let response = await axios.post(
@@ -206,11 +221,15 @@ const JobPage = ({ client }) => {
             pickuplng: pickup.geometry.location.lng(),
             dropofflat: dropoff.geometry.location.lat(),
             dropofflng: dropoff.geometry.location.lng(),
-            client_id: clientId,
+            client_id: userData.id,
+            driver_id: 0,
+            description,
+            accepted: false,
+            completed: false,
           }
         );
         console.log(response.data);
-        // setTrip(response.data);
+        setTrip(response.data);
       } catch (error) {
         console.log(error.message);
       }
@@ -219,10 +238,27 @@ const JobPage = ({ client }) => {
     }
   };
 
+  console.log(legs);
+  const distance = legs?.distance?.text;
+  const duration = legs?.duration?.text;
+  console.log(distance);
+  console.log(duration);
+
   return (
     <Fragment>
       <MapPage pickup={pickup} dropoff={dropoff} work={work}></MapPage>
-      <JobForm onMap={handleMapTrip} onStart={handleStartTrip}></JobForm>
+      {distance || duration ? (
+        <div>
+          <h2>Trip Detail</h2>
+          <p>Pickup: {pickup}</p>
+          <p>Destination: {dropoff}</p>
+          <p>Distance: {distance}</p>
+          <p>Time: {duration}</p>
+          <div>{description}</div>
+        </div>
+      ) : (
+        <JobForm onMap={handleMapTrip} onStart={handleStartTrip}></JobForm>
+      )}
     </Fragment>
   );
 };

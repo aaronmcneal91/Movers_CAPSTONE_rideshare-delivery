@@ -22,7 +22,8 @@ def get_trips(request):
 
     elif request.method =="POST":
         serializer = TripSerializer(data=request.data)
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET','PUT', 'DELETE'])
@@ -34,8 +35,25 @@ def client_trips(request, pk):
         serializer = TripSerializer(trips, many = True)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        trip = get_object_or_404(Trip, pk=pk)
-        serializer = TripSerializer(Trip, data=request.data)
+        trip = get_object_or_404(Trip,pk=pk)
+        serializer = TripSerializer(trip, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET','PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+
+def driver_trips(request, pk):
+    if request.method == 'GET':
+        trips = Trip.objects.filter(driver_id=pk)
+        serializer = TripSerializer(trips, many = True)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        trip = get_object_or_404(Trip,pk=pk)
+        serializer = TripSerializer(trip, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
