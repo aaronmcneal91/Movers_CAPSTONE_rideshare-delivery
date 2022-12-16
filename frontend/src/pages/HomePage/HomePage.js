@@ -50,8 +50,8 @@ const HomePage = () => {
         <p>
           {userData?.last_name}, {userData?.first_name}: {userData?.type?.type}
           {!isDriver && <Link to="/jobpage">Plan a trip</Link>}
-          <Link to="/history">Trip History</Link>
-          {isDriver && <Link to="/jobs">View Jobs</Link>}
+          {<Link to="/history">Trip History</Link>}
+          {!isDriver && <Link to="/jobs">View Jobs</Link>}
         </p>
       </Fragment>
     </div>

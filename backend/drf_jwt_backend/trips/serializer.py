@@ -6,10 +6,10 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ('id', 'pickup', 'dropoff', 'description', 'accepted', 'completed', 'client_id', 'driver_id', 'pickuplat', 'pickuplng', 'dropofflat', 'dropofflng')
+        fields = ('id', 'pickup', 'dropoff', 'description', 'accepted', 'completed', 'client_id', 'pickuplat', 'pickuplng', 'dropofflat', 'dropofflng')
         depth=1
     client_id = serializers.IntegerField(write_only=True)
-    driver_id = serializers.IntegerField(write_only=True)
+
    
    
 
