@@ -16,6 +16,7 @@ import Footer from "./components/Footer/Footer";
 // Util Imports
 import PrivateRoute from "./utils/PrivateRoute";
 import TripHistory from "./pages/TripHistory/TripHistory";
+import trips from "./pages/TripHistory/TripHistory";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/jobpage" element={<JobPage />} />
         <Route path="/history" element={<TripHistory />} />
         <Route path="/jobs" element={<WorkPage />} />
+        {/* <Route path="/trips" element={<JobPage/>}/> */}
       </Routes>
       <Footer />
     </div>
